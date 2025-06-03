@@ -1,0 +1,9 @@
+query GetCollectionByHandle($handle: String!) {
+  collectionByIdentifier(identifier: {handle: $handle}) {
+    id
+    handle
+    descriptionHtml
+    title
+    templateSuffix
+  }
+}

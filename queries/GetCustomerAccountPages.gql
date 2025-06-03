@@ -1,0 +1,9 @@
+query GetCustomerAccountPages{
+  customerAccountPages(first: 250) {
+    nodes {
+      id
+      handle
+      title
+    }
+  }
+}

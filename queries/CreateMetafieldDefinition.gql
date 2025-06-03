@@ -1,0 +1,17 @@
+mutation CreateMetafieldDefinition($input: MetafieldDefinitionInput!) {
+  metafieldDefinitionCreate(
+    definition: $input
+  ) {
+    createdDefinition {
+      id
+      name
+      key
+      namespace
+      ownerType
+    }
+    userErrors {
+      field
+      message
+    }
+  }
+}

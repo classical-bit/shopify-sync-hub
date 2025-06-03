@@ -1,0 +1,12 @@
+mutation UpdateMetafieldDefinition($definition: MetafieldDefinitionUpdateInput!){
+  metafieldDefinitionUpdate(definition: $definition) {
+    updatedDefinition {
+      id
+    }
+    userErrors {
+      code
+      field
+      message
+    }
+  }
+}

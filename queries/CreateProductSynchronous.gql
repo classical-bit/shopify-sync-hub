@@ -1,0 +1,21 @@
+mutation CreateProductSynchronous($product: ProductSetInput!, $synchronous: Boolean!) {
+    productSet(synchronous: $synchronous, input: $product) {
+      product {
+        id
+      }
+      productSetOperation {
+        id
+        status
+        userErrors {
+          code
+          field
+          message
+        }
+      }
+      userErrors {
+        code
+        field
+        message
+      }
+    }
+  }

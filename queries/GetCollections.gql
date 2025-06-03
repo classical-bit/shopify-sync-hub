@@ -1,0 +1,17 @@
+query GetCollections($cursor: String) {
+  collections(first: 250, after: $cursor) {
+    edges {
+      node {
+        id
+        handle
+        descriptionHtml
+        title
+        templateSuffix
+      }
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}

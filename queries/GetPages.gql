@@ -1,0 +1,27 @@
+query GetPages($cursor: String) {
+  pages(first: 250, after: $cursor) {
+    edges {
+      node {
+        id
+        handle
+        title
+        body
+        isPublished
+        templateSuffix
+        metafields(first: 250) {
+          nodes {
+            id
+            namespace
+            key
+            value
+            type
+          }
+        }
+      }
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}

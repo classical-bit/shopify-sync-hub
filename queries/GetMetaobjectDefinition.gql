@@ -1,0 +1,27 @@
+query GetMetaobjectDefinition($id: ID!) {
+  metaobjectDefinition(id: $id) {
+    id
+    type
+    name
+    displayNameKey
+    access {
+      admin
+      storefront
+    }
+    fieldDefinitions {
+      description
+      key
+      name
+      required
+      type {
+        category
+        name
+      }
+      validations {
+        name
+        type
+        value
+      }
+    }
+  }
+}

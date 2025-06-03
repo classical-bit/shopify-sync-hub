@@ -1,0 +1,163 @@
+fragment MetafieldInfo on Metafield {
+  id
+  ownerType
+  namespace
+  key
+  type
+  value
+  description
+}
+
+fragment MetaFieldEdgeInfo on MetafieldEdge {
+  node {
+    ...MetafieldInfo
+  }
+}
+
+fragment ImageInfo on Image {
+  altText
+  height
+  id
+  url
+  width
+}
+
+fragment VariantInfo on ProductVariant {
+  id
+  title
+  sku
+  barcode
+  compareAtPrice
+  media(first: 10) {
+    edges {
+      ...MediaEdgeInfo
+    }
+  }
+  inventoryPolicy
+  inventoryQuantity
+  inventoryItem {
+    id
+    sku
+    unitCost {
+      amount
+    }
+    tracked
+    countryCodeOfOrigin
+    harmonizedSystemCode
+    countryHarmonizedSystemCodes(first: 10) {
+      nodes {
+        countryCode
+      }
+    }
+    provinceCodeOfOrigin
+    measurement {
+      weight {
+        unit
+        value
+      }
+    }
+    requiresShipping
+  }
+  image {
+    ...ImageInfo
+  }
+  selectedOptions {
+    name
+    optionValue {
+      name
+    }
+    value
+  }
+  price
+  taxable
+  taxCode
+  requiresComponents
+  metafields(first: 100) {
+    edges {
+      ...MetaFieldEdgeInfo
+    }
+  }
+}
+
+fragment MediaEdgeInfo on MediaEdge {
+  node {
+    id
+    alt
+    mediaContentType
+    preview {
+      image {
+        ...ImageInfo
+      }
+    }
+  }
+}
+
+fragment ProductInfo on Product {
+  id
+  handle
+  title
+  descriptionHtml
+  isGiftCard
+  collections(first: 200) {
+    edges {
+      node {
+        id
+        handle
+        descriptionHtml
+        title
+        templateSuffix
+      }
+    }
+  }
+  media(first: 200) {
+    edges {
+      ...MediaEdgeInfo
+    }
+  }
+  combinedListingRole
+  options {
+    linkedMetafield {
+      key
+      namespace
+    }
+    name
+    position
+    optionValues {
+      name
+    }
+    values
+  }
+  productType
+  requiresSellingPlan
+  seo {
+    description
+    title
+  }
+  status
+  tags
+  templateSuffix
+  giftCardTemplateSuffix
+  vendor
+  category {
+    id
+    name
+  }
+  variants(first: 200) {
+    edges {
+      node {
+        ...VariantInfo
+      }
+    }
+  }
+  metafields(first: 200) {
+    edges {
+      ...MetaFieldEdgeInfo
+    }
+  }
+}
+
+query GetProduct($id: ID!) {
+  product(id: $id) {
+    ...ProductInfo
+  }
+}

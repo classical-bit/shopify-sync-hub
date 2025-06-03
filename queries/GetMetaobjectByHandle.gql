@@ -1,0 +1,16 @@
+query GetMetaobjectByHandle($type: String!, $handle: String!) {
+  metaobjectByHandle(handle: {type: $type, handle: $handle}) {
+    id
+    handle
+    type
+    definition {
+      id
+      type
+    }
+    fields {
+      key
+      value
+      type
+    }
+  }
+}

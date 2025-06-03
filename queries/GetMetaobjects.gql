@@ -1,0 +1,23 @@
+query GetMetaobjects($type: String!) {
+  metaobjects(first: 250, type: $type) {
+    edges {
+      node {
+        handle
+        displayName
+        definition {
+          id
+          type
+        }
+        fields {
+          key
+          value
+          type
+        }
+      }
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+  }
+}

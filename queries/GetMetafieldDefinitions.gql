@@ -1,0 +1,26 @@
+query GetAllMetafieldDefinitions($ownerType: MetafieldOwnerType! ) {
+  metafieldDefinitions(first: 250, ownerType: $ownerType) {
+    nodes {
+      id
+      name
+      namespace
+      key
+      ownerType
+      type {
+        category
+        name
+      }
+      pinnedPosition
+      access {
+        admin
+        customerAccount
+        storefront
+      }
+      validations {
+        name
+        type
+        value
+      }
+    }
+  }
+}

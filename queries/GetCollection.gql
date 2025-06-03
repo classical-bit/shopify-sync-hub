@@ -1,0 +1,9 @@
+query GetCollection($id: ID!) {
+  collection(id: $id) {
+    id
+    handle
+    descriptionHtml
+    title
+    templateSuffix
+  }
+}

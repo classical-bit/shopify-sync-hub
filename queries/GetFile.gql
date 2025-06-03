@@ -1,0 +1,21 @@
+
+fragment ImageInfo on Image {
+  altText
+  height
+  id
+  url
+  width
+}
+
+query GetFile($query: String!) {
+  files(first: 250, query: $query) {
+    nodes {
+        id
+        preview {
+            image {
+              ...ImageInfo
+            }
+        }
+    }
+  }
+}

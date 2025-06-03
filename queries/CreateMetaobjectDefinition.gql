@@ -1,0 +1,12 @@
+mutation CreateMetaobjectDefinition($input: MetaobjectDefinitionCreateInput!) {
+    metaobjectDefinitionCreate(definition: $input) {
+        metaobjectDefinition{
+            id
+            type
+        }
+        userErrors {
+            field
+            message
+        }
+    }
+}

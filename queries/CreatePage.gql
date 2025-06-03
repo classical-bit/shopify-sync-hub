@@ -1,0 +1,23 @@
+mutation CreatePage($input: PageCreateInput!) {
+	pageCreate(page: $input) {
+    page {
+      id
+      handle
+      title
+      metafields(first: 250) {
+        nodes {
+          id
+          namespace
+          key
+          value
+          type
+        }
+      }
+    }
+    userErrors {
+      code
+      field
+      message
+    }
+  }
+}

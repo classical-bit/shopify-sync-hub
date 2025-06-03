@@ -1,0 +1,9 @@
+mutation DeleteMetafieldDefinition($id: ID!) {
+  metafieldDefinitionDelete(id: $id) {
+    deletedDefinitionId
+    userErrors {
+      field
+      message
+    }
+  }
+}

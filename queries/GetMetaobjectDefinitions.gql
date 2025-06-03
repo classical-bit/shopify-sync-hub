@@ -1,0 +1,38 @@
+query GetMetaobjectDefinitions {
+  metaobjectDefinitions(first: 250) {
+    nodes {
+      id
+      type
+      name
+      displayNameKey
+      access {
+        admin
+        storefront
+      }
+      fieldDefinitions {
+        description
+        key
+        name
+        required
+        type {
+          category
+          name
+        }
+        validations {
+          name
+          type
+          value
+        }
+      }
+      metaobjects(first: 250) {
+        edges {
+          node {
+            id
+            handle
+            type
+          }
+        }
+      }
+    }
+  }
+}

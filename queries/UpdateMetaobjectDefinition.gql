@@ -1,0 +1,11 @@
+mutation UpdateMetaobjectDefinition($id:ID!, $input: MetaobjectDefinitionUpdateInput!) {
+  metaobjectDefinitionUpdate(id: $id, definition: $input) {
+     metaobjectDefinition{
+      id
+    }
+    userErrors {
+      field
+      message
+    }
+  }
+}

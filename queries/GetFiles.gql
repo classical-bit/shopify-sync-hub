@@ -1,0 +1,28 @@
+query ($cursor: String) {
+  files(first: 250, after: $cursor) {
+    edges {
+      node {
+        id
+        createdAt
+        updatedAt
+        alt
+        preview {
+          status
+          image {
+            altText
+            height
+            id
+            url
+            width
+          }
+        }
+        __typename
+      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}

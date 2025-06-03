@@ -1,0 +1,11 @@
+mutation BulkCreateProductVariants($productId: ID!, $variants: [ProductVariantsBulkInput!]!) {
+  productVariantsBulkCreate(variants: $variants, productId: $productId, strategy:REMOVE_STANDALONE_VARIANT ) {
+    productVariants {
+      id
+    }
+    userErrors {
+      field
+      message
+    }
+  }
+}

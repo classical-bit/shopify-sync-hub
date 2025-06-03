@@ -1,0 +1,12 @@
+mutation CreateCollection($collection: CollectionInput!) {
+  collectionCreate(input: $collection) {
+    collection {
+      id
+      handle
+    }
+    userErrors {
+      field
+      message
+    }
+  }
+}

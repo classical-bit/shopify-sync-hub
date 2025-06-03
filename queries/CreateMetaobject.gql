@@ -1,0 +1,12 @@
+mutation CreateMetaobject($input: MetaobjectCreateInput!) {
+    metaobjectCreate(metaobject: $input) {
+    metaobject {
+        id
+        handle
+    }
+    userErrors {
+        field
+        message
+    }
+    }
+}

@@ -1,0 +1,48 @@
+query GetMenus {
+  menus(first: 250) {
+    edges {
+      node {
+        id
+        handle
+        isDefault
+        title
+        items {
+          id
+          title
+          type
+          resourceId
+          url
+          tags
+          items {
+            id
+            title
+            type
+            resourceId
+            url
+            tags
+            items {
+                id
+                title
+                type
+                resourceId
+                url
+                tags
+                items {
+                    id
+                    title
+                    type
+                    resourceId
+                    url
+                    tags
+                }
+            }
+          }
+        }
+      }
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}

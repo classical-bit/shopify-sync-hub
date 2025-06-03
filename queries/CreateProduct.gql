@@ -1,0 +1,11 @@
+mutation CreateProduct($product: ProductCreateInput, $media: [CreateMediaInput!]) {
+  productCreate(media: $media, product: $product) {
+    product {
+      id
+    }
+    userErrors {
+      field
+      message
+    }
+  }
+}

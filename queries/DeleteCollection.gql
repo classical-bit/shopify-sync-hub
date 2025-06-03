@@ -1,0 +1,9 @@
+mutation DeleteCollection($id: ID!) {
+  collectionDelete(input: {id: $id}) {
+    deletedCollectionId
+    userErrors {
+      field
+      message
+    }
+  }
+}

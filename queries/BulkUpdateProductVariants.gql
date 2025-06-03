@@ -1,0 +1,11 @@
+mutation BulkUpdateProductVariants($productId: ID!, $variants: [ProductVariantsBulkInput!]!, $media: [CreateMediaInput!]) {
+  productVariantsBulkUpdate(allowPartialUpdates: true, variants: $variants, productId: $productId, media: $media) {
+    productVariants {
+      id
+    }
+    userErrors {
+      field
+      message
+    }
+  }
+}
