@@ -23,6 +23,7 @@ import { ShopifyMetafieldDefinitionUpdateInput } from './schemas/metafield/Shopi
 import { ShopifyCollectionCreateInput } from './schemas/collection/ShopifyCollectionCreateInput';
 import { ShopifyCollection } from './schemas/collection/ShopifyCollection';
 import { ShopifyFileSetInput } from './schemas/file/ShopifyFileSetInput';
+import { ShopifyMetaobjectUpdateInput } from './schemas/metaobject/ShopifyMetaobjectUpdateInput';
 
 type EdgeConnection<T> = { node: T };
 export class ShopifyConnectionError extends Error {
@@ -522,6 +523,23 @@ export class ShopifyConnection {
     const response = await this.#ShopifyGraphqlRequest(query, { id: gid });
     if (!response.metaobject) return undefined;
     return new MetaobjectModel(response.metaobject);
+  }
+
+  async UpdateMetaobject(id: string, metaobject: ShopifyMetaobjectUpdateInput) {
+    const query = this.readQueryFile("UpdateMetaobject.gql");
+    const variables = {
+      id,
+      metaobject
+    };
+    const response = await this.#ShopifyGraphqlRequest(query, variables);
+    if (response.metaobjectUpdate.userErrors.length > 0) {
+      throw new ShopifyConnectionError("Failed to update Product.",
+        this.shopName,
+        query,
+        JSON.stringify(variables),
+        JSON.stringify({ userErrors: response.metaobjectUpdate.userErrors }));
+    }
+    return response.metaobjectUpdate.metaobject;
   }
 
   async DeleteMetaobject(gid: string): Promise<string> {

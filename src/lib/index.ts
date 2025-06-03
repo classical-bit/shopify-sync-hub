@@ -7,14 +7,14 @@ export async function main() {
     Logger.info("Starting Sync!");
     try {
         const syncService = new SyncService();
-        await syncService.fileService.SyncFiles();
-        await syncService.collectionService.SyncCollections();
-        await syncService.productService.SyncProducts();
-        await syncService.pageService.SyncPages();
-        await syncService.pageService.SyncMenus();
+        // await syncService.fileService.SyncFiles();
+        // await syncService.collectionService.SyncCollections();
+        // await syncService.productService.SyncProducts();
+        // await syncService.pageService.SyncPages();
+        // await syncService.pageService.SyncMenus();
 
-        await syncService.metaobjectDefService.SyncMetaobjectDefinitions();
-        await syncService.metafieldDefService.SyncMetafieldDefinitions();
+        // await syncService.metaobjectDefService.SyncMetaobjectDefinitions();
+        // await syncService.metafieldDefService.SyncMetafieldDefinitions();
 
         await syncService.productService.SyncProductsMetafields();
     } catch (err) {

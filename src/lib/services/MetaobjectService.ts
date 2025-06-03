@@ -2,6 +2,7 @@ import { MetaobjectModel } from "../shopify/models/MetaobjectModel";
 import { ShopifyMetaobject } from "../shopify/schemas/metaobject/ShopifyMetaobject";
 import { ShopifyMetaobjectCreateResponse } from "../shopify/schemas/metaobject/ShopifyMetaobjectCreateResponse";
 import { ShopifyMetaobjectField } from "../shopify/schemas/metaobject/ShopifyMetaobjectField";
+import { ShopifyMetaobjectFieldUpdateInput, ShopifyMetaobjectUpdateInput } from "../shopify/schemas/metaobject/ShopifyMetaobjectUpdateInput";
 import { ShopifyConnection } from "../shopify/ShopifyConnection";
 import { Logger } from "../utils/Logger";
 import { FileService } from "./FileService";
@@ -105,6 +106,27 @@ export class MetaobjectService {
         }
     }
 
+    async GetPartialUpdatedMetaobject(sMetaobject: ShopifyMetaobject, tMetaobject: ShopifyMetaobject) {
+        const metaobjectUpdateData: ShopifyMetaobjectUpdateInput = {
+            handle: sMetaobject.handle
+        };
+
+        const fields: ShopifyMetaobjectFieldUpdateInput[] = [];
+        for (const sField of sMetaobject.fields) {
+            const tField = tMetaobject.fields.find(f => f.key === sField.key);
+            const tFieldNewValue = await this.GetTargetFieldValueForSourceField(sField);
+
+            if (tField && tField.value === tFieldNewValue)
+                continue;
+            fields.push({ key: sField.key, value: tFieldNewValue });
+        }
+
+        if (fields.length)
+            metaobjectUpdateData.fields = fields;
+
+        if (Object.keys(metaobjectUpdateData).length > 1) return metaobjectUpdateData;
+        return undefined;
+    }
 
     async SyncMetaobject(sMetaobjectId: string): Promise<ShopifyMetaobjectCreateResponse> {
         const sMetaobject = await this.source.GetMetaobject(sMetaobjectId);
@@ -115,13 +137,19 @@ export class MetaobjectService {
 
         const tMetaobject = await this.target.GetMetaobjectByHandle(sMetaobject.type, sMetaobject.handle);
         if (tMetaobject) {
-            if (await this.isMetaobjectMatch(sMetaobject, tMetaobject)) {
-                Logger.debug(`Metaobject matched --> handle: ${sMetaobject.handle}, definition_type: ${sMetaobject.definition.type}`);
-                return tMetaobject;
+            if (tMetaobject.type !== sMetaobject.type) {
+                Logger.debug(`Metaobject mis-matched type --> handle: ${sMetaobject.handle}, source_definition_type: ${sMetaobject.definition.type} | target_definition_type: ${tMetaobject.definition.type} `);
+                const deletedMetaobject = await this.target.DeleteMetaobject(tMetaobject.id);
+                Logger.info(`Deleted Metaobject --> handle: ${sMetaobject.handle}, definition_type: ${sMetaobject.definition.type}, tid: ${deletedMetaobject}`);
+            } else {
+                const partialUpdatedMetaobject = await this.GetPartialUpdatedMetaobject(sMetaobject, tMetaobject);
+                if (partialUpdatedMetaobject) {
+                    Logger.debug(`Metaobject mis-matched --> handle: ${sMetaobject.handle}, definition_type: ${sMetaobject.definition.type}`);
+                    const updatedMetaobject = await this.target.UpdateMetaobject(tMetaobject.id, partialUpdatedMetaobject);
+                    Logger.info(`Updated Metaobject --> handle: ${sMetaobject.handle}, definition_type: ${sMetaobject.definition.type}, tid: ${updatedMetaobject.id}`);
+                    return updatedMetaobject;
+                }
             }
-            Logger.debug(`Metaobject mis-matched --> handle: ${sMetaobject.handle}, definition_type: ${sMetaobject.definition.type}`);
-            const deletedMetaobject = await this.target.DeleteMetaobject(tMetaobject.id);
-            Logger.info(`Deleted target mis-matched Metaobject --> handle: ${sMetaobject.handle}, definition_type: ${sMetaobject.definition.type}, tid: ${deletedMetaobject}`);
         }
 
         const tMetaobjectFields = await Promise.all(sMetaobject.fields.map(async (field) => {

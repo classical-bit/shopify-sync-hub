@@ -18,51 +18,34 @@ export class MetafieldService {
         this.metaobjectService = new MetaobjectService(this.source, this.target);
     }
 
-    private async IsMetafieldMatch(sMetafield: ShopifyMetafield, tMetafield: ShopifyMetafield): Promise<boolean> {
-        return await this.metaobjectService.IsFieldMatch(sMetafield, tMetafield);
-    }
-
     async SyncMetafield(ownerId: string, sMetafield: ShopifyMetafield, tMetafield: ShopifyMetafield | undefined): Promise<ShopifyMetafield | null> {
         Logger.debug(`Sync metafield: ${sMetafield.namespace}:${sMetafield.key}(${sMetafield.type}) ownerId: ${ownerId}`);
         if (sMetafield.namespace === "global" && sMetafield.key === "harmonized_system_code") {
-            Logger.debug("Setting Harmonized system code ('harmonized_system_code') as metafield on Product Variant is no longer supported. Update 'harmonized_system_code' on inventory item instead.");
-            Logger.debug(`Not Synced target metafield: ${sMetafield.namespace}:${sMetafield.key}(${sMetafield.type})`);
+            // Logger.debug("Setting Harmonized system code ('harmonized_system_code') as metafield on Product Variant is no longer supported. Update 'harmonized_system_code' on inventory item instead.");
+            // Logger.debug(`Ignore: ${sMetafield.namespace}:${sMetafield.key}(${sMetafield.type})`);
             return null;
         }
 
-        if (tMetafield) {
-            if (await this.IsMetafieldMatch(sMetafield, tMetafield)) {
-                Logger.debug(`Existing Metafield match: ${tMetafield.namespace}:${tMetafield.key}{${tMetafield.id}}`);
-                return tMetafield;
-            }
-
-            Logger.debug(`Existing Metafield mis-match: ${sMetafield.namespace}:${sMetafield.key}{${sMetafield.id}}`);
-            const deletedMetafield = await this.target.DeleteMetafields([{ ...tMetafield, ownerId }]);
-            Logger.info(`Deleted mis-matched Metafield: ${tMetafield.namespace}:${tMetafield.key} ${deletedMetafield}`);
+        const newMetafieldValue = await this.metaobjectService.GetTargetFieldValueForSourceField(sMetafield);
+        if (tMetafield && tMetafield.value === newMetafieldValue) {
+            Logger.debug(`Existing Metafield match: ${sMetafield.namespace}:${sMetafield.key}{${sMetafield.id}}`);
+            return tMetafield;
         }
 
-        const tMetafieldValue = await this.metaobjectService.GetTargetFieldValueForSourceField(sMetafield);
-        if (tMetafieldValue == null) {
-            Logger.info(`Not Synced target Metafield: ${sMetafield.namespace}:${sMetafield.key}(${sMetafield.type})`);
-            return null;
-        }
-
-        const updatedTMetafield = (await this.target.SetMetafields([{
+        const newTMetafield = (await this.target.SetMetafields([{
             ownerId,
             namespace: sMetafield.namespace,
             key: sMetafield.key,
             type: sMetafield.type,
-            value: tMetafieldValue
+            value: newMetafieldValue
         }])).pop();
 
-        if (updatedTMetafield) {
-            Logger.info(`Updated target metafield: ${updatedTMetafield.namespace}:${updatedTMetafield.key}(${updatedTMetafield.type}){${updatedTMetafield.id}}`);
-            return updatedTMetafield;
+        if (newTMetafield) {
+            Logger.info(`Updated target metafield: ${newTMetafield.namespace}:${newTMetafield.key}(${newTMetafield.type}){${newTMetafield.id}}`);
+            return newTMetafield;
         }
-        else {
-            Logger.info(`Not Synced target metafield: ${sMetafield.namespace}:${sMetafield.key}(${sMetafield.type})`);
-            return null;
-        }
+
+        throw new MetafieldServiceError(`Failed to sync metafield: ${sMetafield.namespace}:${sMetafield.key}(${sMetafield.type})`)
     }
 
     async DeleteMetafieldsOfOwners(ownerTypes: string[]) {
